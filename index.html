@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Portatiles Galerias</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; }
+        header {position: relative; background: #fff; color: #000; padding: 20px 0; display: flex; align-items: center; justify-content: center; }
+        header img { height: 100px; margin-right: 15px; }
+        nav { position:sticky; top: 0; background: #333; padding: 10px 0; text-align: center; }
+        nav button { background: #444; color: #fff; border: none; margin: 0 8px; padding: 10px 18px; border-radius: 4px; cursor: pointer; }
+        nav button.active, nav button:hover { background: #0078d7; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .products { display: flex; flex-wrap: wrap; gap: 24px; }
+        .product { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; width: 300px; padding: 18px; display: flex; flex-direction: column; align-items: center; }
+        .product img { width: 100%;  object-fit: cover; border-radius: 6px; }
+        .product-details { width: 100%; margin-top: 10px; }
+        .product-details h4{ font-size: 20px; text-align: center; color:rgb(0, 5, 31) }
+        .product-details p { margin: 4px 0; font-size: 15px; }
+        .product .category { font-weight: bold; color: #0078d7; }
+        .product .price { font-size: 18px; font-weight: bold; color: #28a745; margin: 8px 0; }
+        .product button { background: #0078d7; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+        .cart-btn { position: fixed; top: 5px; right: 20px; background: #28a745; color: #fff; border: none; padding: 12px 22px; border-radius: 6px; font-size: 16px; cursor: pointer; z-index: 100; }
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background: rgba(0,0,0,0.4); }
+        .modal-content { background: #fff; margin: 60px auto; padding: 30px; border-radius: 8px; width: 90%; max-width: 500px; position: relative; }
+        .close { color: #aaa; position: absolute; right: 18px; top: 12px; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .cart-list { margin: 0; padding: 0; list-style: none; }
+        .cart-list li { margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .whatsapp-btn { background: #25d366; color: #fff; border: none; padding: 10px 18px; border-radius: 4px; font-size: 16px; cursor: pointer; margin-top: 18px; }
+        @media (max-width: 700px) {
+            .products { flex-direction: column; align-items: center; }
+            .product { width: 95%; }
+            header h1{ font-size: 20px; }
+            nav{position: inherit;}
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="/assets/recursos/logoPortNiSinFondo.png" alt="Logo" />
+        <h1>Portatiles Galerias Sto Domingo</h1>
+    </header>
+    <nav>
+        <button class="filter-btn active" data-category="all">Todos</button>
+        <button class="filter-btn" data-category="gamer">Gamer</button>
+        <button class="filter-btn" data-category="hp">HP</button>
+        <button class="filter-btn" data-category="dell">Dell</button>
+        <button class="filter-btn" data-category="lenovo">Lenovo</button>
+        <button class="filter-btn" data-category="asus">Asus</button>
+        <button class="filter-btn" data-category="acer">Acer</button>
+    </nav>
+    <button class="cart-btn" onclick="openCart()">Ver Carrito (<span id="cart-count">0</span>)</button>
+    <div class="container">
+        <div class="products" id="products"></div>
+    </div>
+    <!-- Modal Carrito -->
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCart()">&times;</span>
+            <h2>Carrito de Compras</h2>
+            <ul class="cart-list" id="cart-list"></ul>
+            <p id="cart-total"></p>
+            <button class="whatsapp-btn" onclick="sendWhatsApp()">Solicitar por WhatsApp</button>
+        </div>
+    </div>
+    <script>
+        // Datos de laptops
+        const laptops = [
+                            /* EOTRAS  */
+            {
+                imagen: "assets/laptops/otras/ASUS L510KA-WH21405.png",
+                nombre: "ASUS L510KA-WH21",
+                procesador: "Pentium® Silver N6000",
+                ram: "4GB",
+                almacenamiento: "128GB eMMC",
+                grafica: "Integrados",
+                pantalla: "15.6 (1920x1080)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "asus",
+                precio: 405
+            },   
+            {
+                imagen: "assets/laptops/OTRAS/ASUS VIVOBOOK 17X K1703ZA-WH34 495.png",
+                nombre: "ASUS VIVOBOOK 17X K1703ZA-WH34",
+                procesador: "Core™ i3-1220P",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "17.3\" (1920x1080)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "asus",
+                precio: 495
+            },  
+            {
+                imagen: "assets/laptops/OTRAS/ASUS VIVOBOOK 5435EA-DH71 795.png",
+                nombre: "ASUS VIVOBOOK 5435EA-DH71",
+                procesador: "Core™ i7-1165G7",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "14 (1920x1080)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "asus",
+                precio: 795
+            },  
+            {
+                imagen: "assets/laptops/OTRAS/ASUS ZENBOOK Q408UG 795.png",
+                nombre: "ASUS ZENBOOK Q408UG",
+                procesador: "AMD RYZEN™ 5 5500U",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "NVIDIA® MX450 2048MB",
+                pantalla: "14 (1920x1080)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "asus",
+                precio: 795
+            },  
+            {
+                imagen: "assets/laptops/OTRAS/ACER SWIFT 3 SF314-59-75QC795.png",
+                nombre: "ACER SWIFT 3 SF314-59-75QC",
+                procesador: "Core™ i7-1165G7",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "14 (1920x1080) IPS",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "acer",
+                precio: 795
+            },  
+            {
+                imagen: "assets/laptops/OTRAS/ASUS ZENBOOK Q415MA-U5512 875.png",
+                nombre: "ASUS ZENBOOK Q415MA-U5512",
+                procesador: "Core™ Ultra 5 125H",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "14\" (1920x1200) OLED TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "asus",
+                precio: 875
+            }, 
+
+                            /* FOTRAS */
+
+                        /* EDELL  */
+            {
+                imagen: "assets/laptops/DELL/DELL INSPIRON 3515 395.png",
+                nombre: "DELL INSPIRON 3515",
+                procesador: "AMD ATHLON™ SILVER 3050U",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6 (1366x768)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "dell",
+                precio: 395
+            },   
+            {
+                imagen: "assets/laptops/DELL/DELL VOSTRO 3400 555.png",
+                nombre: "DELL VOSTRO 3400",
+                procesador: "Core™ i5-1135G7",
+                ram: "8GB",
+                almacenamiento: "1TB HDD",
+                grafica: "Integrados",
+                pantalla: "14 (1366x768)",
+                teclado: "Alfabeto",
+                categoria: "ultrabook",
+                marca: "dell",
+                precio: 555
+            }, 
+            {
+                imagen: "assets/laptops/DELL/DELL INSPIRON 3501 565.png",
+                nombre: "DELL INSPIRON 3501",
+                procesador: "Core™ i5-1135G7",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6 (1366x768)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "dell",
+                precio: 565
+            }, 
+            {
+                imagen: "assets/laptops/DELL/DELL INSPIRON 7501 695.png",
+                nombre: "DELL INSPIRON 7501",
+                procesador: "Core™ i5-10300H",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6 (1920x1080)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "dell",
+                precio: 695
+            }, 
+            {
+                imagen: "assets/laptops/DELL/DELL PRECISION 3570 WORKSTATION 835.png",
+                nombre: "DELL PRECISION 3570 WORKSTATION",
+                procesador: "Core™ i5-1245U",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "NVIDIA T550 4GB",
+                pantalla: "15.6 (1920x1080)",
+                teclado: "Iluminado",
+                categoria: "workstation",
+                marca: "dell",
+                precio: 835
+            }, 
+            {
+                imagen: "assets/laptops/DELL/Dell Inspiron 7440-5311BLU 2-IN-1  870.png",
+                nombre: "DELL INSPIRON 7440-5311BLU 2-IN-1",
+                procesador: "Core™ 5 120U",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "14\" (1920x1200) TACTIL",
+                teclado: "Ice Blue Backlit",
+                categoria: "ultrabook",
+                marca: "dell",
+                precio: 870
+            }, 
+            {
+                imagen: "assets/laptops/DELL/DELL INSPIRON 14 PLUS 7440 975.png",
+                nombre: "DELL INSPIRON 14 PLUS 7440 975",
+                procesador: "Core™ Ultra 7 155H",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "Integrados",
+                pantalla: "14\" (2880x1800)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "dell",
+                precio: 975
+            }, 
+            {
+                imagen: "assets/laptops/DELL/DELL LATITUDE 5531 1045.png",
+                nombre: "DELL LATITUDE 5531",
+                procesador: "Core™ i7-12800H",
+                ram: "16GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6 (1366x768)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "dell",
+                precio: 1045
+            }, 
+                            /* FDELL */
+
+                            /* EHP*/
+ 
+            {
+                imagen: "assets/laptops/HP/HP 14-DQ0802 325.png",
+                nombre: "HP 14-DQ0802",
+                procesador: "CELERON® N4120",
+                ram: "4GB",
+                almacenamiento: "64GB eMMC",
+                grafica: "Integrados",
+                pantalla: "14\" (1366x768) TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 325
+            },
+            {
+                imagen: "assets/laptops/HP/HP 14-DQ0804 325.png",
+                nombre: "HP 14-DQ0804",
+                procesador: "CELERON® QUAD-CORE N4120",
+                ram: "4GB",
+                almacenamiento: "64GB eMMC",
+                grafica: "Integrados",
+                pantalla: "14\" (1366x768) TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 325
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 14-DQ6013 350.png",
+                nombre: "HP 14-DQ6013",
+                procesador: "INTEL® N150",
+                ram: "4GB",
+                almacenamiento: "128GB USF",
+                grafica: "Integrados",
+                pantalla: "14\" (1366x768)",
+                teclado: "Alfabeto",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 350
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 14-DQ6012DX 375.png",
+                nombre: "HP 14-DQ6012DX",
+                procesador: "INTEL® N150",
+                ram: "4GB",
+                almacenamiento: "128GB UFS",
+                grafica: "Integrados",
+                pantalla: "14\" (1366x768)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 375
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 14-DQ6015 375.png",
+                nombre: "HP 14-DQ6015",
+                procesador: "INTEL® N150",
+                ram: "4GB",
+                almacenamiento: "128GB UFS",
+                grafica: "Integrados",
+                pantalla: "14\" (1366x768)",
+                teclado: "Alfabeto",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 375
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD0106DS 405.png",
+                nombre: "HP 15-FD0106DS",
+                procesador: "Intel Processor N100",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 405
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD0107DS 405.png",
+                nombre: "HP 15-FD0107DS",
+                procesador: "Intel Processor N100",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 405
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD0109DS 405.png",
+                nombre: "HP 15-FD0109DS",
+                procesador: "Intel Processor N100",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 405
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD0110DS 405.png",
+                nombre: "HP 15-FD0110DS",
+                procesador: "Intel Processor N100",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 405
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD0108DS 405.png",
+                nombre: "HP 15-FD0108DS",
+                procesador: "Intel Processor N100",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 405
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 17-CN0613 415.png",
+                nombre: "HP 17-CN0613",
+                procesador: "CELERON® N4120",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "17.3 (1920X1080)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 415
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 17-CN3102 435.png",
+                nombre: "HP 17-CN3102",
+                procesador: "INTEL® N200",
+                ram: "4GB",
+                almacenamiento: "128GB USF",
+                grafica: "Integrados",
+                pantalla: "17.3\" (1600x900)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 435
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD0101DS 435.png",
+                nombre: "HP 15-FD0101DS",
+                procesador: "Intel Processor N100",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768) TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 435
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD0104  435.png",
+                nombre: "HP 15-FD0104",
+                procesador: "INTEL® N100",
+                ram: "4GB",
+                almacenamiento: "128GB UFS",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768) TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 435
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD0103DS 435.png",
+                nombre: "HP 15-FD0103DS",
+                procesador: "Intel Processor N100",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768) TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 435
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD0105DS 435.png",
+                nombre: "HP 15-FD0105DS",
+                procesador: "Intel Processor N100",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768) TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 435
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD0102DS 435.png",
+                nombre: "HP 15-FD0102DS",
+                procesador: "Intel Processor N100",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768) TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 435
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 17-CN3001TG  445.png",
+                nombre: "HP 17-CN3001TG",
+                procesador: "Intel Processor N200",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "17.3\" (1600x900) TACTIL",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 445
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FC0382 450.png",
+                nombre: "HP 15-FC0382",
+                procesador: "AMD RYZEN™ 3 7320U",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 450
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD0239 480.png",
+                nombre: "HP 15-FD0239",
+                procesador: "Intel® N200",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 480
+            },
+            {
+                imagen: "assets/laptops/HP/HP 15-FD0232 480.png",
+                nombre: "HP 15-FD0232",
+                procesador: "Intel® N200",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 480
+            },  
+            {
+                imagen: "assets/laptops/HP/HP 15-DY5033 495.png",
+                nombre: "HP 15-DY5033",
+                procesador: "Core™ i3-1215U",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768) TACTIL",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 495
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD0131 515.png",
+                nombre: "HP 15-FD0131",
+                procesador: "Core™ i3-N305",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 515
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 14-EP1063 525.png",
+                nombre: "HP 14-EP1063",
+                procesador: "Core™ 3-100U",
+                ram: "12GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "14\" (1920x1080)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 525
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-DY5033 525.png",
+                nombre: "HP 15-DY5033",
+                procesador: "Core™ i3-1215U",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080) TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 525
+            },
+            {
+                imagen: "assets/laptops/HP/HP 14T-EP000 595.png",
+                nombre: "HP 14T-EP000",
+                procesador: "Core™ i5-1335U",
+                ram: "8GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "14 (1366x768)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 595
+            },  
+             {
+                imagen: "assets/laptops/HP/HP 17T-CN300  675.png",
+                nombre: "HP 17T-CN300",
+                procesador: "Core™ i5-1335U",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "17.3\" (1600x900)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 675
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FC0037 685.png",
+                nombre: "HP 15-FC0037",
+                procesador: "AMD RYZEN™ 5 7520U",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6 (1920X1080)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 685
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD0025 675.png",
+                nombre: "HP 15-FD0025",
+                procesador: "Core™ i5-1335U",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 695
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 17T-CN400 700.png",
+                nombre: "HP 17T-CN400",
+                procesador: "Core™ 5 120U",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "17.3\" (1920x1080)",
+                teclado: "alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 700
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-DY2033 715.png",
+                nombre: "HP 15-DY2033",
+                procesador: "Core™ i7-1165G7",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6 (1366x768)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 715
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 17T-CN400 725.png",
+                nombre: "HP 17T-CN400",
+                procesador: "Core™ 5 120U",
+                ram: "12GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "17.3\" (1920x1080)",
+                teclado: "alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 725
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 17T-CN300  725.png",
+                nombre: "HP 17T-CN300",
+                procesador: "Core™ i5-1335U",
+                ram: "16GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "17.3\" (1600x900)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 725
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 17T-CN300  725 BLACK.png",
+                nombre: "HP 17T-CN300",
+                procesador: "Core™ i5-1334U",
+                ram: "16GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "17.3\" (1920x1080)",
+                teclado: "alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 725
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD1085 725.png",
+                nombre: "HP 15-FD1085",
+                procesador: "Core™ 5 120U",
+                ram: "12GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080) TACTIL",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 725
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD1007CA 750.png",
+                nombre: "HP 15-FD1007CA",
+                procesador: "Core™ 5 120U",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080)",
+                teclado: "Iluminado (Natural Silver)",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 750
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15T-FD000 750.png",
+                nombre: "HP 15T-FD000",
+                procesador: "Core™ Ultra 5 125H",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 750
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 17-CN4003 750.png",
+                nombre: "HP 17-CN4003",
+                procesador: "Core™ 5 120U",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "17.3\" (1920x1080)",
+                teclado: "Iluminado (Natural Silver, FR/EN)",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 750
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP ELITEBOOK 650 G9 755.png",
+                nombre: "HP ELITEBOOK 650 G9",
+                procesador: "Core™ i5-1235U",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 755
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-DY2177 765.png",
+                nombre: "HP 15-DY2177",
+                procesador: "Core™ i7-1165G7",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6 (1920x1080) TACTIL",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 765
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FC0710DS 775.png",
+                nombre: "HP 15-FC0710DS",
+                procesador: "AMD RYZEN™ 5 7530U",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768) TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 775
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FC0701DS 775.png",
+                nombre: "HP 15-FC0701DS",
+                procesador: "AMD RYZEN™ 5 7530U",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768) TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 775
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FC0704DS 775.png",
+                nombre: "HP 15-FC0704DS",
+                procesador: "AMD RYZEN™ 5 7530U",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768) TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 775
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 17-CP3047 775.png",
+                nombre: "HP 17-CP3047",
+                procesador: "AMD Ryzen™ 7 7730U",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "17.3\" (1920x1080)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 775
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 17-CP3055CL  775.png",
+                nombre: "HP 17-CP3055CL",
+                procesador: "AMD RYZEN™ 5 7530U",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "Integrados",
+                pantalla: "17.3\" (1600x900) TACTIL",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 775
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15T-FD100 825.png",
+                nombre: "HP 15T-FD100",
+                procesador: "Core™ 7 150U",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 825
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD000 825.png",
+                nombre: "HP 15-FD000",
+                procesador: "Core™ i7-1355U",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 825
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD0707 825.png",
+                nombre: "HP 15-FD0707",
+                procesador: "Core™ i7-1355U",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 825
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 17T-CN300  825.png",
+                nombre: "HP 17T-CN300",
+                procesador: "Core™ i7-1355U",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "17.3\" (1600x900)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 825
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 17-CN2267 865.png",
+                nombre: "HP 17-CN2267",
+                procesador: "Core™ i7-1255U",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "17.3 (1920x1280)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 865
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP ProBook 450 G9 935.png",
+                nombre: "HP ProBook 450 G9",
+                procesador: "Core™ i7-1255U",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6 (1920x1080)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 935
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP 15-FD1008 945.png",
+                nombre: "HP 15-FD1008",
+                procesador: "Core™ Ultra 7 155H",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080) TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 945
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP PAVILION 16T-AF000 945.png",
+                nombre: "HP PAVILION 16T-AF000",
+                procesador: "Core™ Ultra 7 155U",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "16\" (1920x1200)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 945
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP ENVY X360 15T-FE100 2-IN-1 945.png",
+                nombre: "HP ENVY X360 15T-FE100",
+                procesador: "Core™ 7 155U",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080) TACTIL",
+                teclado: "Alfabeto",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 945
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP PAVILION 16T-AF000 975.png",
+                nombre: "HP PAVILION 16T-AF000",
+                procesador: "Core™ Ultra 7 155U",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "Integrados",
+                pantalla: "16\" (1920x1200)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 975
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP ENVY X360 15T-FE100 2-in-1 995.png",
+                nombre: "HP ENVY X360 15T-FE100",
+                procesador: "Core™ 7 155U",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080) TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 995
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP ENVY X360 14T-ES100 2-in-1 1075.png",
+                nombre: "HP ENVY X360 14T-ES100",
+                procesador: "Core™ 7 150U",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "Integrados",
+                pantalla: "14\" (1920x1080) TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 1075
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP EliteBook 640 G11 1130.png",
+                nombre: "HP EliteBook 640 G11",
+                procesador: "Core™ Ultra 5 135U",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "14\" (1920x1200)",
+                teclado: "Alfabeto",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 1130
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP ENVY 17-DA0047NR 1145.png",
+                nombre: "HP ENVY 17-DA0047NR",
+                procesador: "Core™ Ultra 7 155H",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "17.3\" (1920x1080) TACTIL",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 1145
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP SPECTRE X360 14T-EU000 2-in-1 1150.png",
+                nombre: "HP SPECTRE X360 14T-EU000",
+                procesador: "Core™ Ultra 5 125H",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "Integrados",
+                pantalla: "14\" (2880x1800) OLED TACTIL 120Hz",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 1150
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP ELITEBOOK 840 G11 CTO 1195.png",
+                nombre: "HP ELITEBOOK 840 G11 CTO",
+                procesador: "Core™ Ultra 7 165U",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "14\" (1920x1200)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 1195
+            }, 
+            {
+                imagen: "assets/laptops/HP/HP SPECTRE X360 16T-AA000 2-in-1 1250.png",
+                nombre: "HP SPECTRE X360 16T-AA000",
+                procesador: "Core™ Ultra 7 155H",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "Integrados",
+                pantalla: "16\" (2560x1600) TACTIL 120Hz",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "hp",
+                precio: 1250
+            }, 
+                            /* FHP */
+
+                            /*ELENOVO*/
+            
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO 1 14IGL7 350.png",
+                nombre: "LENOVO 1 14IGL7",
+                procesador: "CELERON® N4020",
+                ram: "4GB",
+                almacenamiento: "128GB EMMC",
+                grafica: "Integrados",
+                pantalla: "14\" (1366x768)",
+                teclado: "Alfabeto",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 350
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO 1 14IJL7 350.png",
+                nombre: "LENOVO 1 14IJL7",
+                procesador: "CELERON® N4500",
+                ram: "4GB",
+                almacenamiento: "128GB EMMC",
+                grafica: "Integrados",
+                pantalla: "14\" (1366x768)",
+                teclado: "Alfabeto",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 350
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO 1 15IJL7 395.png",
+                nombre: "LENOVO 1 15IJL7",
+                procesador: "CELERON® N4500",
+                ram: "4GB",
+                almacenamiento: "128GB EMMC",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 395
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO 1 15IJL7 405.png",
+                nombre: "LENOVO 1 15IJL7",
+                procesador: "Pentium® Silver N6000",
+                ram: "4GB",
+                almacenamiento: "128GB EMMC",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 405
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO 1 15AMN7 405.png",
+                nombre: "LENOVO 1 15AMN7",
+                procesador: "AMD ATHLON™ GOLD 7220U",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 405
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO 1 15IJL7 405.png",
+                nombre: "LENOVO 1 15IJL7",
+                procesador: "CELERON® N4500",
+                ram: "4GB",
+                almacenamiento: "128GB EMMC",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1366x768)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 405
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO 1 15AMN7 415.png",
+                nombre: "LENOVO 1 15AMN7",
+                procesador: "AMD RYZEN™ 3 7320U",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 415
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO 3 15ITL05 445.png",
+                nombre: "LENOVO 3 15ITL05",
+                procesador: "Core™ i3-1115G4",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 445
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO 1 15AMN7 465.png",
+                nombre: "LENOVO 1 15AMN7",
+                procesador: "AMD RYZEN™ 3 7320U",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 465
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO FLEX 5 14ITL05 2-in-1 495.png",
+                nombre: "LENOVO FLEX 5 14ITL05 ",
+                procesador: "Core™ i3-1115G4",
+                ram: "4GB",
+                almacenamiento: "128GB SSD",
+                grafica: "Integrados",
+                pantalla: "14\" (1920x1080) TOUCHSCREEN",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 495
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO SLIM 3 15IAN8 495.png",
+                nombre: "LENOVO SLIM 3 15IAN8",
+                procesador: "Core™ i3-N305",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080)",
+                teclado: "Alfabeto + Numerico",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 495
+            },
+            {
+                imagen: "assets/laptops/LENOVO/Lenovo ThinkPad T14s Gen 1  635.png",
+                nombre: "LENOVO THINKPAD T14S GEN 1",
+                procesador: "AMD RYZEN™ 5 PRO 5650U",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "14 (1920X1080)",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 635
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO THINKPAD X13 GEN 2 665.png",
+                nombre: "LENOVO THINKPAD X13 GEN 2",
+                procesador: "Core™ i5-1135G7",
+                ram: "8GB",
+                almacenamiento: "256GB SSD",
+                grafica: "Integrados",
+                pantalla: "13.3 (1920x1200)",
+                teclado: "Alfabeto",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 665
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO SLIM 3 15IRU9 695.png",
+                nombre: "LENOVO SLIM 3 15IRU9",
+                procesador: "Core™ 5 120U",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080) TOUCHSCREEN",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 695
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO FLEX 5 14IAU7 2-in-1 745.png",
+                nombre: "LENOVO FLEX 5 14IAU7",
+                procesador: "Core™ i5-1235U",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "14\" (1920x1200) TOUCHSCREEN",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 745
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO FLEX 5 14ABR8 2-in-1 775.png",
+                nombre: "LENOVO FLEX 5 14ABR8 2-in-1",
+                procesador: "AMD Ryzen™ 7 7730U",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "14\" (1920x1200) TOUCHSCREEN IPS",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 775
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO SLIM 3 15IRU9 845.png",
+                nombre: "LENOVO SLIM 3 15IRU9",
+                procesador: "Core™ 5 120U",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080) TOUCHSCREEN IPS",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 845
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO 5 14IRU9 2-in-1 845.png",
+                nombre: "LENOVO 5 14IRU9 2-in-1",
+                procesador: "Core™ 5 120U",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "14\" (1920x1200) TOUCHSCREEN",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 845
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO FLEX 5 16IAU7 2-in-1 845.png",
+                nombre: "LENOVO FLEX 5 16IAU7 2-in-1",
+                procesador: "Core™ i7-1255U",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "16\" (1920x1200) TOUCHSCREEN",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 845
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO 5 16IRU9 2-in-1 870.png",
+                nombre: "LENOVO 5 16IRU9 2-in-1",
+                procesador: "Core™ 5 120U",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "16\" (1920x1200) TOUCHSCREEN",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 870
+            }, 
+            {
+                imagen: "assets/laptops/LENOVO/LENOVO 3 15IAU7 875.png",
+                nombre: "LENOVO 3 15IAU7",
+                procesador: "Core™ i7-1255U",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Integrados",
+                pantalla: "15.6\" (1920x1080) TOUCHSCREEN IPS",
+                teclado: "Iluminado",
+                categoria: "ultrabook",
+                marca: "lenovo",
+                precio: 875
+            }, 
+
+                        /* FLENOVO */
+                        
+                                  /* eGAMING */
+
+            {
+                imagen: "assets/laptops/gamer/1.png",
+                nombre: "HP Victus 15-fb2063dx Gaming",
+                procesador: "AMD Ryzen 5 7535HS",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "Radeon RX 6550M 4GB",
+                pantalla: "15.6'' (1920x1080)",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "hp",
+                precio: 835,
+            },
+            {
+                imagen: "assets/laptops/gamer/2.png",
+                nombre: "HP Pavilion TP01-5029",
+                procesador: "Intel Core i5-14400F",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "NVIDIA RTX 3050 8GB",
+                pantalla: "#N/A",
+                teclado: "Teclado y Mouse",
+                categoria: "gamer",
+                marca: "hp",
+                precio: 845,
+            },
+            {
+                imagen: "assets/laptops/gamer/3.png",
+                nombre: "Lenovo LOQ 15IAX9E Gaming",
+                procesador: "Intel Core i5-12450HX",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "NVIDIA RTX 2050 4GB",
+                pantalla: "15.6'' (1920x1080) 144Hz",
+                teclado: "NO Iluminado",
+                categoria: "gamer",
+                marca: "lenovo",
+                precio: 895,
+            },
+            {
+                imagen: "assets/laptops/gamer/4.png",
+                nombre: "HP Victus 15-fa1030 Gaming",
+                procesador: "Intel Core i5-12450H",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "NVIDIA RTX 2050 4GB",
+                pantalla: "15.6\" (1920x1080) 144Hz IPS",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "hp",
+                precio: 915,
+            },
+            {
+                imagen: "assets/laptops/gamer/5.png",
+                nombre: "MSI GF63 THIN 11UC-1276US Gaming",
+                procesador: "Intel Core i5-11400H",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "NVIDIA RTX 3050 4GB",
+                pantalla: "15.6\" (1920x1080) 144Hz IPS",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "msi",
+                precio: 945,
+            },
+            {
+                imagen: "assets/laptops/gamer/6.png",
+                nombre: "HP Victus 15-fa0033 Gaming",
+                procesador: "Intel Core i5-12450H",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "NVIDIA RTX 3050 4GB",
+                pantalla: "15.6\" (1920x1080) 144Hz",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "hp",
+                precio: 975,
+            },
+            {
+                imagen: "assets/laptops/gamer/7.png",
+                nombre: "DELL G15 5530 GAMING",
+                procesador: "Core™ i5-13450HX",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "NVIDIA RTX 3050 6GB",
+                pantalla: "15.6\" (1920x1080) 120Hz",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "dell",
+                precio: 1075,
+            },
+            {
+                imagen: "assets/laptops/gamer/8.png",
+                nombre: "HP Victus 15-fb2082 Gaming",
+                procesador: "AMD Ryzen 5 8645HS",
+                ram: "8GB",
+                almacenamiento: "512GB SSD",
+                grafica: "NVIDIA RTX 4050 6GB",
+                pantalla: "15.6\" (1920x1080)",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "hp",
+                precio: 1135,
+            },
+            {
+                imagen: "assets/laptops/gamer/9.png",
+                nombre: "HP Envy 17-CR1000",
+                procesador: "Core™ i7-1355U",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "NVIDIA® RTX 3050 4096MB",
+                pantalla: "17.3\" (1920x1080)",
+                teclado: "ILUMINADO",
+                categoria: "gamer",
+                marca: "hp",
+                precio: 1145,
+            },
+            {
+                imagen: "assets/laptops/gamer/10.png",
+                nombre: "HP Pavilion 16T-AF000",
+                procesador: "Core™ Ultra 7 155U",
+                ram: "32GB",
+                almacenamiento: "1TB SSD",
+                grafica: "NVIDIA® MX570A 4096MB",
+                pantalla: "16\" (1920x1200)",
+                teclado: "ALFABETO + NUMERICO",
+                categoria: "gamer",
+                marca: "hp",
+                precio: 1150,
+            },
+            {
+                imagen: "assets/laptops/gamer/11.png",
+                nombre: "HP Victus 15-fa2701 Gaming",
+                procesador: "Core™ i5-13420H",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "NVIDIA® RTX 4050 6144MB",
+                pantalla: "15.6\" (1920x1080) 144Hz",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "hp",
+                precio: 1175,
+            },
+            {
+                imagen: "assets/laptops/gamer/12.png",
+                nombre: "MSI Thin 15 B13VF Gaming",
+                procesador: "Core™ i5-13420H",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "NVIDIA® RTX 4060 8GB",
+                pantalla: "15.6\" (1920x1080) 144Hz",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "msi",
+                precio: 1175,
+            },
+            {
+                imagen: "assets/laptops/gamer/13.png",
+                nombre: "HP ENVY 17-CW1023CL",
+                procesador: "CORE™ ULTRA 7 155U 1.0GHZ",
+                ram: "32GB",
+                almacenamiento: "1TB SSD",
+                grafica: "NVIDIA® RTX 3050 4096MB",
+                pantalla: "17.3\" (1920X1080) TACTIL",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "hp",
+                precio: 1250,
+            },
+            {
+                imagen: "assets/laptops/gamer/14.png",
+                nombre: "DELL G15 5530 GAMING",
+                procesador: "CORE™ I5-13450HX",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "NVIDIA® RTX 4050 6144MB",
+                pantalla: "15.6\" (1920x1080) 3ms 165Hz",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "dell",
+                precio: 1250,
+            },
+            {
+                imagen: "assets/laptops/gamer/15.png",
+                nombre: "HP Victus 15-fa1163 Gaming",
+                procesador: "Core™ i7-12650H",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "NVIDIA® RTX 4050 6144MB",
+                pantalla: "15.6\" (1920x1080) 144Hz IPS",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "hp",
+                precio: 1445,
+            },
+            {
+                imagen: "assets/laptops/gamer/16.png",
+                nombre: "DELL ALIENWARE M15 R7 RYZEN GAMING",
+                procesador: "Ryzen 7 6800H",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "NVIDIA® RTX 3060 6144MB",
+                pantalla: "15.6 (1920x1080) 165Hz G-SYNC",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "dell",
+                precio: 1495,
+            },
+            {
+                imagen: "assets/laptops/gamer/17.png",
+                nombre: "HP OMEN 16-AE0457 GAMING",
+                procesador: "Core™ i7-14650HX",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "NVIDIA® RTX 4050 6144MB",
+                pantalla: "16.1\" (1920x1080) 144Hz IPS",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "hp",
+                precio: 1570,
+            },
+            {
+                imagen: "assets/laptops/gamer/18.png",
+                nombre: "HP OMEN 16T-WF100 GAMING",
+                procesador: "Core™ i7-14700HX",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "NVIDIA® RTX 4050 6144MB",
+                pantalla: "16.1\" (1920x1080) 165Hz",
+                teclado: "Iluminado RGB",
+                categoria: "gamer",
+                marca: "hp",
+                precio: 1605,
+            },
+            {
+                imagen: "assets/laptops/gamer/19.png",
+                nombre: "HP OMEN TRANSCEND 16T-U100 GAMING",
+                procesador: "Core™ i7-14700HX",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "NVIDIA® RTX 4050 6144MB",
+                pantalla: "16.1\" (2560x1600) 240Hz",
+                teclado: "Iluminado RGB",
+                categoria: "gamer",
+                marca: "hp",
+                precio: 1605,
+            },
+            {
+                imagen: "assets/laptops/gamer/20.png",
+                nombre: "MSI THIN A15 B8VF-270 GAMING",
+                procesador: "AMD Ryzen™ 9 8945HS",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "NVIDIA® RTX 4060 8192MB",
+                pantalla: "15.6\" (1920x1080) 144Hz IPS",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "msi",
+                precio: 1645,
+            },
+            {
+                imagen: "assets/laptops/gamer/21.png",
+                nombre: "MSI KATANA 15 B13VFK-2049 GAMING",
+                procesador: "CORE™ I7-13620H",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "NVIDIA® RTX 4060 8192MB",
+                pantalla: "15.6\" (1920x1080) 144Hz IPS",
+                teclado: "Iluminado RGB",
+                categoria: "gamer",
+                marca: "msi",
+                precio: 1825,
+            },
+            {
+                imagen: "assets/laptops/gamer/22.png",
+                nombre: "HP OMEN 17-CK1797 GAMING",
+                procesador: "Core™ i7-12700HX",
+                ram: "16GB",
+                almacenamiento: "1TB SSD",
+                grafica: "NVIDIA® RTX 3070Ti 8192MB",
+                pantalla: "17.3\" (2560x1440) 165Hz",
+                teclado: "Iluminado RGB",
+                categoria: "gamer",
+                marca: "hp",
+                precio: 1645,
+            },
+            {
+                imagen: "assets/laptops/gamer/23.png",
+                nombre: "Lenovo Legion 5 16IRX9 Gaming",
+                procesador: "Intel Core i7-14700HX",
+                ram: "32GB",
+                almacenamiento: "1TB SSD",
+                grafica: "NVIDIA RTX 4070 8GB",
+                pantalla: "16'' WQXGA (2560x1600) 165Hz IPS",
+                teclado: "RGB Backlit",
+                categoria: "gamer",
+                marca: "lenovo",
+                precio: 2365,
+            },   
+
+                            /* fGAMER */
+        ];
+
+        let cart = [];
+        let paymentMode = "normal"; // "normal" o "tasa0"
+
+        // Renderizado de productos
+        function renderProducts(filter = "all") {
+            const productsDiv = document.getElementById('products');
+            productsDiv.innerHTML = '';
+            let filtered = laptops.filter(lap => {
+                if (filter === "all") return true;
+                if (filter === "gamer") return lap.categoria === "gamer";
+                return lap.marca === filter;
+            });
+            filtered.forEach((lap, idx) => {
+                productsDiv.innerHTML += `
+                    <div class="product">
+                    <img src="${lap.imagen}" alt="${lap.nombre}">
+                    <div class="product-details">
+                        <h4><strong>${lap.nombre}</strong></h4>
+                        <p><strong>Procesador:</strong> ${lap.procesador}</p>
+                        <p><strong>RAM:</strong> ${lap.ram}</p>
+                        <p><strong>Almacenamiento:</strong> ${lap.almacenamiento}</p>
+                        <p><strong>Gráfica:</strong> ${lap.grafica}</p>
+                        <p><strong>Pantalla:</strong> ${lap.pantalla}</p>
+                        <p><strong>Teclado:</strong> ${lap.teclado}</p>
+                        <p class="category">Categoría: ${capitalize(lap.categoria)}</p>
+                        <p class="price">US$${lap.precio}</p>
+                        <button onclick="addToCart(${idx})">
+                            <svg xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:6px;" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm10 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm-12.293-2.707a.999.999 0 0 0 .707.293h13a1 1 0 0 0 .96-.725l3-10A1 1 0 0 0 19 4H6.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44A1.003 1.003 0 0 0 5 16c0 .265.105.52.293.707zM6.16 6h11.25l-2.76 9H7.42l-1.26-2.28L6.16 6z"/></svg>
+                            Agregar al carrito
+                        </button>
+                    </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Capitalizar
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // Filtros
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.onclick = function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                renderProducts(this.dataset.category);
+            }
+        });
+
+        // Carrito
+        function addToCart(idx) {
+            cart.push(laptops[idx]);
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            document.getElementById('cart-count').textContent = cart.length;
+        }
+
+        function openCart() {
+            document.getElementById('cart-modal').style.display = 'block';
+            renderCart();
+        }
+
+        function closeCart() {
+            document.getElementById('cart-modal').style.display = 'none';
+        }
+
+        function renderCart() {
+            const cartList = document.getElementById('cart-list');
+            cartList.innerHTML = '';
+            let total = 0;
+            let totalTasa0 = 0;
+            cart.forEach((item, i) => {
+                total += item.precio;
+                totalTasa0 += Math.round(item.precio * 1.15);
+                cartList.innerHTML += `
+                    <li>
+                    <strong>${item.nombre}</strong><br>
+                    RAM: ${item.ram}, Almacenamiento: ${item.almacenamiento}, Gráfica: ${item.grafica}<br>
+                    Precio: US$${item.precio}
+                    <button style="margin-left:10px;background:#dc3545;" onclick="removeFromCart(${i})">Quitar</button>
+                    </li>
+                `;
+            });
+
+            // Botones de pago
+            let btnNormalClass = paymentMode === "normal" ? "background:#0078d7;color:#fff;" : "";
+            let btnTasa0Class = paymentMode === "tasa0" ? "background:#0078d7;color:#fff;" : "";
+
+            cartList.innerHTML += `
+            <div style="margin-top:18px;display:flex;gap:10px;">
+                <button onclick="setPaymentMode('normal')" style="padding:10px 18px;border-radius:4px;border:none;cursor:pointer;${btnNormalClass}">
+                Efectivo/Transferencia<br><span style="font-size:15px;">US$${total}</span>
+                </button>
+                <button onclick="setPaymentMode('tasa0')" style="padding:10px 18px;border-radius:4px;border:none;cursor:pointer;${btnTasa0Class}">
+                Tasa 0%<br><span style="font-size:15px;">US$${totalTasa0}</span>
+                </button>
+            </div>
+            `;
+
+            document.getElementById('cart-total').textContent = cart.length ? 
+                (paymentMode === "normal" ? `Total: US$${total}` : `Total Tasa 0%: US$${totalTasa0}`) 
+                : "El carrito está vacío.";
+        }
+
+        function setPaymentMode(mode) {
+            paymentMode = mode;
+            renderCart();
+        }
+
+        function removeFromCart(idx) {
+            cart.splice(idx, 1);
+            updateCartCount();
+            renderCart();
+        }
+
+        // WhatsApp
+        function sendWhatsApp() {
+            if (cart.length === 0) return;
+            let msg = "¡Hola! Quiero solicitar los siguientes portátiles:%0A";
+            let total = 0;
+            let totalTasa0 = 0;
+            cart.forEach(item => {
+                total += item.precio;
+                totalTasa0 += Math.round(item.precio * 1.15);
+                msg += `- ${item.nombre} | RAM: ${item.ram} | Almacenamiento: ${item.almacenamiento} | Gráfica: ${item.grafica} | Precio: US$${item.precio}%0A`;
+            });
+            if (paymentMode === "tasa0") {
+                msg += `%0ATotal Tasa 0%: US$${totalTasa0}`;
+            } else {
+                msg += `%0ATotal: US$${total}`;
+            }
+            window.open(`https://wa.me/50587278025?text=${msg}`, '_blank');
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('cart-modal');
+            if (event.target == modal) {
+                closeCart();
+            }
+        }
+
+        // Agregar icono de carrito al botón
+        document.addEventListener("DOMContentLoaded", function() {
+            const cartBtn = document.querySelector('.cart-btn');
+            if (cartBtn) {
+                cartBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:8px;" width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm10 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm-12.293-2.707a.999.999 0 0 0 .707.293h13a1 1 0 0 0 .96-.725l3-10A1 1 0 0 0 19 4H6.21l-.94-2H1v2h2l3.6 7.59-1.35 2.44A1.003 1.003 0 0 0 5 16c0 .265.105.52.293.707zM6.16 6h11.25l-2.76 9H7.42l-1.26-2.28L6.16 6z"/></svg>Ver Carrito (<span id="cart-count">0</span>)`;
+            }
+        });
+
+        // Inicializar
+        renderProducts();
+        updateCartCount();
+    </script>
+</body>
+</html>
