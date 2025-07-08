@@ -6,15 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" sizes="64x64" href="./assets/recursos/logoPortNiSinFondo.png">
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; }
         header {position: relative; background: #fff; color: #000; padding: 20px 0; display: flex; align-items: center; justify-content: center; }
         header img { height: 100px; margin-right: 15px; }
         nav { position:sticky; top: 0; background: #333; padding: 10px 0; text-align: center; }
         nav button { background: #444; color: #fff; border: none; margin: 0 8px; padding: 10px 18px; border-radius: 4px; cursor: pointer; }
         nav button.active, nav button:hover { background: #0078d7; }
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .container { max-width: 1500px; margin: 30px auto; padding: 0 20px; }
         .products { display: flex; flex-wrap: wrap; gap: 24px; }
-        .product { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; width: 300px; padding: 18px; display: flex; flex-direction: column; align-items: center; }
+        .product { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; width: 410px; padding: 18px; display: flex; flex-direction: column; align-items: center; }
         .product img { width: 100%;  object-fit: cover; border-radius: 6px; }
         .product-details { width: 100%; margin-top: 10px; }
         .product-details h4{ font-size: 20px; text-align: center; color:rgb(0, 5, 31) }
@@ -32,7 +33,7 @@
         .whatsapp-btn { background: #25d366; color: #fff; border: none; padding: 10px 18px; border-radius: 4px; font-size: 16px; cursor: pointer; margin-top: 18px; }
         @media (max-width: 700px) {
             .products { flex-direction: column; align-items: center; }
-            .product { width: 95%; }
+            .product { width: 98%; }
             header h1{ font-size: 20px; text-align: center; }
             nav{position: inherit;}
             .modal-content{max-width: 80%;}
@@ -730,19 +731,6 @@
                 precio: 750
             }, 
             {
-                imagen: "assets/laptops/HP/HP 15T-FD000 750.png",
-                nombre: "HP 15T-FD000",
-                procesador: "Core™ Ultra 5 125H",
-                ram: "16GB",
-                almacenamiento: "512GB SSD",
-                grafica: "Integrados",
-                pantalla: "15.6\" (1920x1080)",
-                teclado: "Alfabeto + Numerico",
-                categoria: "ultrabook",
-                marca: "hp",
-                precio: 750
-            }, 
-            {
                 imagen: "assets/laptops/HP/HP 17-CN4003 750.png",
                 nombre: "HP 17-CN4003",
                 procesador: "Core™ 5 120U",
@@ -881,19 +869,6 @@
                 grafica: "Integrados",
                 pantalla: "15.6\" (1920x1080)",
                 teclado: "Iluminado",
-                categoria: "ultrabook",
-                marca: "hp",
-                precio: 825
-            }, 
-            {
-                imagen: "assets/laptops/HP/HP 17T-CN300  825.png",
-                nombre: "HP 17T-CN300",
-                procesador: "Core™ i7-1355U",
-                ram: "16GB",
-                almacenamiento: "512GB SSD",
-                grafica: "Integrados",
-                pantalla: "17.3\" (1600x900)",
-                teclado: "Alfabeto + Numerico",
                 categoria: "ultrabook",
                 marca: "hp",
                 precio: 825
@@ -1376,19 +1351,6 @@
                 precio: 845,
             },
             {
-                imagen: "assets/laptops/gamer/3.png",
-                nombre: "Lenovo LOQ 15IAX9E Gaming",
-                procesador: "Intel Core i5-12450HX",
-                ram: "8GB",
-                almacenamiento: "512GB SSD",
-                grafica: "NVIDIA RTX 2050 4GB",
-                pantalla: "15.6'' (1920x1080) 144Hz",
-                teclado: "NO Iluminado",
-                categoria: "gamer",
-                marca: "lenovo",
-                precio: 895,
-            },
-            {
                 imagen: "assets/laptops/gamer/4.png",
                 nombre: "HP Victus 15-fa1030 Gaming",
                 procesador: "Intel Core i5-12450H",
@@ -1440,6 +1402,19 @@
                 marca: "dell",
                 precio: 1075,
             },
+            {
+                imagen: "assets/laptops/gamer/DELL G15 5535 GAMING 1075.png",
+                nombre: "DELL G15 5535",
+                procesador: "AMD RYZEN 5 7640HS",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "NVIDIA® RTX 3050 6GB",
+                pantalla: "15.6\" (1920x1080) 120Hz",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "dell",
+                precio: 1075
+            }, 
             {
                 imagen: "assets/laptops/gamer/8.png",
                 nombre: "HP Victus 15-fb2082 Gaming",
@@ -1545,6 +1520,19 @@
                 precio: 1445,
             },
             {
+                imagen: "assets/laptops/gamer/LENOVO LOQ 15IAX9E GAMING 1445.png",
+                nombre: "LENOVO LOQ 15IAX9E ",
+                procesador: "Core™ i7-12650HX",
+                ram: "16GB",
+                almacenamiento: "512GB SSD",
+                grafica: "NVIDIA® RTX 4050 6144MB",
+                pantalla: "15.6\" (1920x1080) 144Hz IPS",
+                teclado: "Iluminado",
+                categoria: "gamer",
+                marca: "lenovo",
+                precio: 1445
+            }, 
+            {
                 imagen: "assets/laptops/gamer/16.png",
                 nombre: "DELL ALIENWARE M15 R7 RYZEN GAMING",
                 procesador: "Ryzen 7 6800H",
@@ -1634,6 +1622,19 @@
                 categoria: "gamer",
                 marca: "hp",
                 precio: 1645,
+            },
+            {
+                imagen: "assets/laptops/gamer/LENOVO LEGION 5 16IRX9 2225.png",
+                nombre: "LENOVO LEGION 5 16IRX9",
+                procesador: "Core™ i9-14900HX",
+                ram: "32GB",
+                almacenamiento: "1TB SSD",
+                grafica: "NVIDIA® RTX 4060 8GB",
+                pantalla: "16\" (2560x1600) 165Hz",
+                teclado: "Iluminado RGB",
+                categoria: "gamer",
+                marca: "lenovo",
+                precio: 2225
             },
             {
                 imagen: "assets/laptops/gamer/23.png",
